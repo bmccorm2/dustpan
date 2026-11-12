@@ -132,7 +132,7 @@ fn parse_login_items(out: &str) -> Option<Vec<(String, String)>> {
     Some(names.iter().zip(paths).map(|(n, p)| (n.to_string(), path(p))).collect())
 }
 
-fn login_items() -> Result<Vec<StartupItem>, String> {
+pub fn login_items() -> Result<Vec<StartupItem>, String> {
     let out = Command::new("/usr/bin/osascript")
         .args(["-e", "tell application \"System Events\" to get {name, path} of every login item"])
         .output()
@@ -154,6 +154,11 @@ fn login_items() -> Result<Vec<StartupItem>, String> {
             editable: true,
         })
         .collect())
+}
+
+/// Only ~/Library/LaunchAgents (no launchctl or System Events calls).
+pub fn user_agents(home: &Path) -> Vec<StartupItem> {
+    read_launch_dir(&home.join("Library/LaunchAgents"), Kind::UserAgent, &HashSet::new())
 }
 
 pub fn list(home: &Path) -> StartupList {

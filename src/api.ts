@@ -56,6 +56,21 @@ export interface StartupList {
   warning: string | null;
 }
 
+export interface TaskInfo {
+  id: string;
+  title: string;
+  description: string;
+  needsAdmin: boolean;
+}
+
+export type TaskStatus = "running" | "done" | "skipped" | "failed";
+
+export interface TaskResult {
+  id: string;
+  status: TaskStatus;
+  message: string;
+}
+
 export const api = {
   fdaStatus: () => invoke<boolean>("fda_status"),
   openFdaSettings: () => invoke<void>("open_fda_settings"),
@@ -71,4 +86,6 @@ export const api = {
   startupList: () => invoke<StartupList>("startup_list"),
   startupSetEnabled: (id: string, enabled: boolean) => invoke<void>("startup_set_enabled", { id, enabled }),
   startupRemove: (id: string) => invoke<ActionResult>("startup_remove", { id }),
+  optimizeTasks: () => invoke<TaskInfo[]>("optimize_tasks"),
+  optimizeRun: (ids: string[]) => invoke<TaskResult[]>("optimize_run", { ids }),
 };

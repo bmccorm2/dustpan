@@ -160,3 +160,17 @@ input.switch::after {
 input.switch:checked { background: var(--accent); border-color: var(--accent); }
 input.switch:checked::after { background: #fff; transform: translateX(12px); }
 input.switch:disabled { opacity: 0.5; }
+
+/* Optimize */
+.task { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; cursor: pointer; }
+.task + .task { border-top: 1px solid var(--hairline); }
+.task:hover { background: var(--bg-elev); }
+.task input { margin-top: 3px; }
+.task-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.task-title { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+.lock { color: var(--text-dim); }
+.task-status { display: flex; align-items: center; gap: 8px; max-width: 45%; min-height: 18px; font-size: 12px; text-align: right; }
+.st-done { color: var(--ok); }
+.st-skipped { color: var(--text-dim); }
+.st-failed { color: var(--error); }
+.st-msg { overflow: hidden; text-overflow: ellipsis; }

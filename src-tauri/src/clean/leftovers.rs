@@ -110,7 +110,7 @@ fn find_apps(dir: &Path, depth: u32, ids: &mut HashSet<String>) {
 }
 
 /// True if nothing inside `path` changed in the last `days`. Walk errors count as "not stale".
-fn is_stale(path: &Path, now: SystemTime, days: u64) -> bool {
+pub(crate) fn is_stale(path: &Path, now: SystemTime, days: u64) -> bool {
     let cutoff = now - Duration::from_secs(days * 86_400);
     let cutoff = cutoff.duration_since(SystemTime::UNIX_EPOCH).map(|d| d.as_secs() as i64).unwrap_or(0);
     let Ok(meta) = std::fs::symlink_metadata(path) else { return false };

@@ -1,6 +1,7 @@
 mod apps;
 mod clean;
 mod fsutil;
+mod optimize;
 mod safety;
 mod startup;
 
@@ -127,6 +128,28 @@ async fn startup_remove(id: String) -> Result<ActionResult, String> {
     blocking(move || startup::remove(&home, &id)).await
 }
 
+#[tauri::command]
+fn optimize_tasks() -> Vec<optimize::TaskInfo> {
+    optimize::TASKS.to_vec()
+}
+
+#[tauri::command]
+async fn optimize_run(app: tauri::AppHandle, ids: Vec<String>) -> Result<Vec<optimize::TaskResult>, String> {
+    let home = home()?;
+    blocking(move || {
+        let mut results = Vec::new();
+        for id in ids {
+            let running = optimize::TaskResult { id: id.clone(), status: optimize::Status::Running, message: String::new() };
+            let _ = app.emit("optimize://progress", &running);
+            let r = optimize::run_task(&home, &id);
+            let _ = app.emit("optimize://progress", &r);
+            results.push(r);
+        }
+        Ok(results)
+    })
+    .await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -145,6 +168,8 @@ pub fn run() {
             startup_list,
             startup_set_enabled,
             startup_remove,
+            optimize_tasks,
+            optimize_run,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

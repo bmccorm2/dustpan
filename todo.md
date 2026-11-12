@@ -233,16 +233,16 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
   - [x] 7.7 UI: a filter (All / Enabled / Disabled / Broken), grouped list (Login items, My background services, System agents, System daemons), and a "Broken" badge in `--error`. Editable rows get an enable toggle and a Remove button (with confirm). Read-only rows get only Reveal. Show the warning banner when it is present.
   - [x] 7.8 Tests: the `print-disabled` parser (both formats); plist parsing and broken detection with temp plists.
 
-- [ ] 8. **Optimize** (`optimize.rs`, `src/views/optimize.ts`).
-  - [ ] 8.1 `TaskInfo { id, title, description, needs_admin }`, `TaskResult { id, status: "done"|"skipped"|"failed", message }`. Tasks:
+- [x] 8. **Optimize** (`optimize.rs`, `src/views/optimize.ts`).
+  - [x] 8.1 `TaskInfo { id, title, description, needs_admin }`, `TaskResult { id, status: "done"|"skipped"|"failed", message }`. Tasks:
     1. `flush_dns` "Flush DNS cache", needs_admin: `admin_shell("dscacheutil -flushcache; killall -HUP mDNSResponder")`.
     2. `rebuild_quicklook` "Rebuild QuickLook cache": `qlmanage -r cache`, then `qlmanage -r`.
     3. `saved_state` "Clear old saved window states": trash children of `home/Library/Saved Application State` with mtime older than 30 days. Message: "Removed N". If there are none: skipped, "Nothing older than 30 days".
     4. `broken_agents` "Remove broken background services": userAgent items from `startup.rs` with `broken=true` → `startup_remove`. Message lists the labels.
     5. `broken_login_items` "Remove broken login items": login items with `broken=true` → remove.
-  - [ ] 8.2 Command `optimize_run(ids: Vec<String>) -> Vec<TaskResult>` runs the tasks sequentially, emitting `optimize://progress { id, status: "running"|"done"|"skipped"|"failed", message }`. Also add `optimize_tasks() -> Vec<TaskInfo>`.
-  - [ ] 8.3 UI: list of tasks with checkboxes (all checked by default), descriptions, a lock icon (`Lock`) on admin tasks, and a "Run selected" button. Each row shows live status (spinner in `--running`, ✓ in `--ok`, skipped in `--text-dim`, failed in `--error`) plus its message.
-  - [ ] 8.4 Tests: saved-state age filtering with a temp home.
+  - [x] 8.2 Command `optimize_run(ids: Vec<String>) -> Vec<TaskResult>` runs the tasks sequentially, emitting `optimize://progress { id, status: "running"|"done"|"skipped"|"failed", message }`. Also add `optimize_tasks() -> Vec<TaskInfo>`.
+  - [x] 8.3 UI: list of tasks with checkboxes (all checked by default), descriptions, a lock icon (`Lock`) on admin tasks, and a "Run selected" button. Each row shows live status (spinner in `--running`, ✓ in `--ok`, skipped in `--text-dim`, failed in `--error`) plus its message.
+  - [x] 8.4 Tests: saved-state age filtering with a temp home.
 
 - [ ] 9. **Analyze** (`analyze.rs`, `src/views/analyze.ts`).
   - [ ] 9.1 `AnalyzeState` (Tauri managed state, `Mutex`) stores `root: PathBuf` and `dir_sizes: HashMap<PathBuf, u64>`.
