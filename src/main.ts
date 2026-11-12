@@ -1,7 +1,7 @@
 import "./theme.css";
 import "./styles.css";
 import { Gauge, HardDrive, Package, Sparkles, type IconNode } from "lucide";
-import { el, icon } from "./ui";
+import { el, fdaBanner, icon } from "./ui";
 import * as clean from "./views/clean";
 import * as apps from "./views/apps";
 import * as optimize from "./views/optimize";
@@ -25,7 +25,7 @@ const KEY = "molesweep.tab";
 const app = document.getElementById("app")!;
 const bar = el("nav.tabbar");
 const views = el("div.views");
-app.append(bar, views);
+app.append(bar, fdaBanner(), views);
 
 const panes = new Map<string, HTMLElement>();
 const buttons = new Map<string, HTMLElement>();

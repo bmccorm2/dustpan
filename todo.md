@@ -73,8 +73,8 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
   - [x] 1.7 Copy `LICENSE` (GPL-3.0) from `/tmp/mole-src/LICENSE`.
   - [x] 1.8 Verify: `bun run tauri dev` opens a window with 4 switchable tabs.
 
-- [ ] 2. **Rust core: safety guard + fs utilities** (`safety.rs`, `fsutil.rs`).
-  - [ ] 2.1 `safety::check(path: &Path, home: &Path) -> Result<(), String>` returns `Err(reason)` when any of these is true:
+- [x] 2. **Rust core: safety guard + fs utilities** (`safety.rs`, `fsutil.rs`).
+  - [x] 2.1 `safety::check(path: &Path, home: &Path) -> Result<(), String>` returns `Err(reason)` when any of these is true:
     - The path is not absolute, contains a `..` component, or contains a newline.
     - The path does not exist (`symlink_metadata` fails).
     - It is not strictly under `home`, `/Applications/` or `/Library/` (only `/Library/LaunchAgents`, `/Library/LaunchDaemons` and `/Library/Caches` are allowed under `/Library`).
@@ -82,16 +82,16 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
     - It is inside a protected subtree: `home/Library/Keychains`, `home/Library/Mobile Documents`, `home/Library/CloudStorage`, `home/.ssh`, `home/.gnupg`, any path containing `/TCC/`, `com.apple.TCC`, `backgroundtaskmanagement`, `com.apple.sharedfilelist`, `/System/`.
     - Its lowercased path contains one of: `1password`, `bitwarden`, `lastpass`, `keepass`, `dashlane`, `enpass`, `keychain`.
     - It is an app bundle under `/Applications` or `/System/Applications` whose bundle id starts with `com.apple.`.
-  - [ ] 2.2 `fsutil::allocated_size(path) -> u64`: recursive sum of `metadata.blocks() * 512`. It does not follow symlinks, counts each `(dev, ino)` only once when `nlink > 1`, and silently skips entries it cannot read. Use `jwalk` for directories.
-  - [ ] 2.3 `fsutil::trash_paths(paths: &[PathBuf], home: &Path) -> ActionResult`. For each path: run `safety::check`, compute `allocated_size`, then trash it with `trash::TrashContext` set to `trash::macos::DeleteMethod::NsFileManager`. Trash paths **one at a time** and collect each failure.
+  - [x] 2.2 `fsutil::allocated_size(path) -> u64`: recursive sum of `metadata.blocks() * 512`. It does not follow symlinks, counts each `(dev, ino)` only once when `nlink > 1`, and silently skips entries it cannot read. Use `jwalk` for directories.
+  - [x] 2.3 `fsutil::trash_paths(paths: &[PathBuf], home: &Path) -> ActionResult`. For each path: run `safety::check`, compute `allocated_size`, then trash it with `trash::TrashContext` set to `trash::macos::DeleteMethod::NsFileManager`. Trash paths **one at a time** and collect each failure.
     `ActionResult { done: Vec<String>, failed: Vec<Failure { path: String, reason: String }>, bytes: u64 }`.
-  - [ ] 2.4 `fsutil::has_full_disk_access(home) -> bool`: true if `fs::read_dir(home/Library/Safari)` succeeds. If it fails with `PermissionDenied`, return false. If it fails with `NotFound`, retry the same check with `home/Library/Containers/com.apple.stocks`; if that is also missing, return true.
-  - [ ] 2.5 `fsutil::running_bundle_ids() -> HashSet<String>`: parse every `bundleID="…"` in the output of `/usr/bin/lsappinfo list`.
-  - [ ] 2.6 `fsutil::admin_shell(script: &str) -> Result<String, String>`: run `osascript -e 'do shell script "<escaped>" with administrator privileges'`. Escape `\` and `"`. If the user cancels (osascript error `-128`), return `Err("Cancelled")`.
-  - [ ] 2.7 `fsutil::reveal(path)` runs `open -R <path>`.
-  - [ ] 2.8 Commands: `fda_status() -> bool`, `open_fda_settings()` (runs `open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"`), `reveal_in_finder(path)`, `trash_paths(paths: Vec<String>) -> ActionResult`.
-  - [ ] 2.9 Frontend `src/ui.ts`: `fdaBanner()`, which is shown at the top of every tab while `fda_status()` is false and has an "Open System Settings" button; `confirmDialog({title, message, confirmLabel}) -> Promise<boolean>`, a custom modal (do not use `window.confirm`); `formatBytes` (base 1000, matching Finder: `1.2 GB`); `toast()`.
-  - [ ] 2.10 Tests: one test for each rejection rule, a test that allows `home/Library/Caches/com.foo/x`, and a hard-link dedupe test for `allocated_size`.
+  - [x] 2.4 `fsutil::has_full_disk_access(home) -> bool`: true if `fs::read_dir(home/Library/Safari)` succeeds. If it fails with `PermissionDenied`, return false. If it fails with `NotFound`, retry the same check with `home/Library/Containers/com.apple.stocks`; if that is also missing, return true.
+  - [x] 2.5 `fsutil::running_bundle_ids() -> HashSet<String>`: parse every `bundleID="…"` in the output of `/usr/bin/lsappinfo list`.
+  - [x] 2.6 `fsutil::admin_shell(script: &str) -> Result<String, String>`: run `osascript -e 'do shell script "<escaped>" with administrator privileges'`. Escape `\` and `"`. If the user cancels (osascript error `-128`), return `Err("Cancelled")`.
+  - [x] 2.7 `fsutil::reveal(path)` runs `open -R <path>`.
+  - [x] 2.8 Commands: `fda_status() -> bool`, `open_fda_settings()` (runs `open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"`), `reveal_in_finder(path)`, `trash_paths(paths: Vec<String>) -> ActionResult`.
+  - [x] 2.9 Frontend `src/ui.ts`: `fdaBanner()`, which is shown at the top of every tab while `fda_status()` is false and has an "Open System Settings" button; `confirmDialog({title, message, confirmLabel}) -> Promise<boolean>`, a custom modal (do not use `window.confirm`); `formatBytes` (base 1000, matching Finder: `1.2 GB`); `toast()`.
+  - [x] 2.10 Tests: one test for each rejection rule, a test that allows `home/Library/Caches/com.foo/x`, and a hard-link dedupe test for `allocated_size`.
 
 - [ ] 3. **Clean backend: rule engine** (`clean/mod.rs`, `clean/rules.rs`).
   - [ ] 3.1 Types:
