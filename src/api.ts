@@ -23,6 +23,21 @@ export interface CleanItem {
   blockedReason: string | null;
 }
 
+export interface AppInfo {
+  name: string;
+  bundleId: string;
+  version: string;
+  path: string;
+  size: number;
+  icon: string | null;
+}
+
+export interface Leftover {
+  path: string;
+  size: number;
+  kind: string;
+}
+
 export const api = {
   fdaStatus: () => invoke<boolean>("fda_status"),
   openFdaSettings: () => invoke<void>("open_fda_settings"),
@@ -31,4 +46,8 @@ export const api = {
   cleanScan: () => invoke<CleanItem[]>("clean_scan"),
   emptyTrash: () => invoke<ActionResult>("empty_trash"),
   trashSize: () => invoke<number>("trash_size"),
+  appsList: () => invoke<AppInfo[]>("apps_list"),
+  appLeftovers: (bundleId: string, name: string) => invoke<Leftover[]>("app_leftovers", { bundleId, name }),
+  uninstallApp: (bundleId: string, name: string, appPath: string | null, leftoverPaths: string[]) =>
+    invoke<ActionResult>("uninstall_app", { bundleId, name, appPath, leftoverPaths }),
 };

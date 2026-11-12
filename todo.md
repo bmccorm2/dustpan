@@ -188,28 +188,28 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
   - [x] 5.4 Commands: `empty_trash() -> ActionResult` and `trash_size() -> u64`. Wire the "Empty Trash" button from task 4 to these, behind a confirm dialog that says "This permanently deletes everything in the Trash."
   - [x] 5.5 Tests: an orphan is detected (fake installed set; backdate mtimes with `libc::utimes`, no extra crate); a recently modified entry is kept; `com.apple.x` is kept; an installed id is kept; AI versions keep the active entry plus 1 newest.
 
-- [ ] 6. **Apps → Uninstall** (`apps.rs`, `src/views/apps.ts`).
-  - [ ] 6.1 `installed_apps(home) -> Vec<AppInfo { name, bundle_id, version, path, size, icon: Option<String> }>`:
+- [x] 6. **Apps → Uninstall** (`apps.rs`, `src/views/apps.ts`).
+  - [x] 6.1 `installed_apps(home) -> Vec<AppInfo { name, bundle_id, version, path, size, icon: Option<String> }>`:
     - Find `*.app` directly in `/Applications`, in `/Applications/*/` (one level of subfolders), and in `home/Applications`.
     - Read `Contents/Info.plist` with the `plist` crate: `CFBundleIdentifier`, `CFBundleName`/`CFBundleDisplayName` (falling back to the file stem), `CFBundleShortVersionString`, `CFBundleIconFile`.
     - Exclude `com.apple.*` and `com.bryan.molesweep`.
     - Sizes come from `allocated_size`, computed in parallel.
     - Icon: run `sips -s format png --resampleHeightWidth 64 64 <icns> --out <app_cache_dir>/icons/<bundle_id>.png` if that PNG doesn't already exist, then return a `data:image/png;base64,…` URL. `None` on failure.
     - Sort by name.
-  - [ ] 6.2 `installed_bundle_map(home) -> HashMap<String, String>` (bundle id → name). Replace the task 3 stub with it.
-  - [ ] 6.3 `app_leftovers(home, bundle_id, name) -> Vec<Leftover { path, size, kind }>`. Look for entries matching the bundle id (exact, or prefixed by `<bundle_id>.`) or the exact app name in:
+  - [x] 6.2 `installed_bundle_map(home) -> HashMap<String, String>` (bundle id → name). Replace the task 3 stub with it.
+  - [x] 6.3 `app_leftovers(home, bundle_id, name) -> Vec<Leftover { path, size, kind }>`. Look for entries matching the bundle id (exact, or prefixed by `<bundle_id>.`) or the exact app name in:
     - `Library/Application Support/<x>`, `Library/Caches/<x>`, `Library/Containers/<id>`, `Library/Group Containers/*<id>*`
     - `Library/Preferences/<id>*.plist`, `Library/Saved Application State/<id>.savedState`
     - `Library/HTTPStorages/<id>*`, `Library/WebKit/<id>`, `Library/Logs/<x>`, `Library/Cookies/<id>.binarycookies`, `Library/LaunchAgents/<id>*.plist`
     - `Library/Application Scripts/<id>`
     - `kind` = the parent folder name ("Caches", "Preferences", …). Skip anything that fails `safety::check`. Name matching is case-insensitive. The name match is skipped if the name is shorter than 4 characters.
-  - [ ] 6.4 `uninstall_app(app_path, leftover_paths) -> ActionResult`:
+  - [x] 6.4 `uninstall_app(app_path, leftover_paths) -> ActionResult`:
     - If the app's bundle id is in `running_bundle_ids()`, return an error result "Quit <name> first" and trash nothing.
     - For leftover LaunchAgent plists, first run `launchctl bootout gui/<uid> <plist>` and ignore errors.
     - Then call `trash_paths([app_path] + leftover_paths)`.
     - If trashing the `.app` fails with a permission error, report "Needs admin: remove it in Finder". No admin escalation.
-  - [ ] 6.5 Commands: `apps_list`, `app_leftovers`, `uninstall_app`.
-  - [ ] 6.6 UI:
+  - [x] 6.5 Commands: `apps_list`, `app_leftovers`, `uninstall_app`.
+  - [x] 6.6 UI:
     - Segmented control "Uninstall | Startup" at the top of the Apps tab (Startup is filled in by task 7).
     - Uninstall shows a search box, a sort toggle (Name / Size), and an app list (icon, name, version, size).
     - Selecting an app shows a detail pane with leftover rows that have checkboxes, all checked by default, plus the app row (checked, with an option to uncheck so only the data is removed).

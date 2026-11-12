@@ -5,7 +5,7 @@ mod safety;
 
 use fsutil::ActionResult;
 use std::path::PathBuf;
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
 
 pub(crate) fn home() -> Result<PathBuf, String> {
     dirs::home_dir().ok_or_else(|| "No home folder".to_string())
@@ -78,6 +78,36 @@ async fn trash_size() -> Result<u64, String> {
     blocking(move || Ok(clean::trash_size(&home))).await
 }
 
+#[tauri::command]
+async fn apps_list(app: tauri::AppHandle) -> Result<Vec<apps::AppInfo>, String> {
+    let home = home()?;
+    let icons = app.path().app_cache_dir().map_err(|e| e.to_string())?.join("icons");
+    blocking(move || Ok(apps::installed_apps(&home, &icons))).await
+}
+
+#[tauri::command]
+async fn app_leftovers(bundle_id: String, name: String) -> Result<Vec<apps::Leftover>, String> {
+    let home = home()?;
+    blocking(move || Ok(apps::app_leftovers(&home, &bundle_id, &name))).await
+}
+
+#[tauri::command]
+async fn uninstall_app(
+    bundle_id: String,
+    name: String,
+    app_path: Option<String>,
+    leftover_paths: Vec<String>,
+) -> Result<ActionResult, String> {
+    let home = home()?;
+    blocking(move || {
+        let leftovers: Vec<PathBuf> = leftover_paths.into_iter().map(PathBuf::from).collect();
+        let app = app_path.map(PathBuf::from);
+        let running = fsutil::running_bundle_ids();
+        Ok(apps::uninstall_app(&home, &bundle_id, &name, app.as_deref(), &leftovers, &running))
+    })
+    .await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -90,6 +120,9 @@ pub fn run() {
             clean_scan,
             empty_trash,
             trash_size,
+            apps_list,
+            app_leftovers,
+            uninstall_app,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
