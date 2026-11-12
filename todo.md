@@ -63,15 +63,15 @@ Build **MoleSweep**, a personal macOS cleaner app (Tauri 2 + Rust) that copies f
 
 Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick the task box once all of its sub-steps are ticked. The user may refer to a sub-step by its number (e.g. `t3.2`).
 
-- [ ] 1. **Scaffold + repo + shell UI.**
-  - [ ] 1.1 Run `git init -b main` in `~/src/mole`. Make the first commit on `main` with only `todo.md` and a `.gitignore` (`node_modules/`, `dist/`, `src-tauri/target/`, `src-tauri/gen/`). Feature branches start from there.
-  - [ ] 1.2 Scaffold into a temp dir, **never into `~/src/mole` and never with `--force`**: `cd /tmp && bun create tauri-app molesweep --template vanilla-ts --manager bun --yes` (if the flags differ, run `bun create tauri-app --help`). Copy the result into `~/src/mole` without overwriting `todo.md`.
-  - [ ] 1.3 Apply the names/identifier/window size from Decisions in `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`. Copy the `[profile.release]` block from `~/src/pi-desktop/src-tauri/Cargo.toml`.
-  - [ ] 1.4 Add deps: `bun add lucide @fontsource-variable/open-sans @tauri-apps/plugin-dialog`. Add these Cargo deps: `serde` (derive), `serde_json`, `tauri-plugin-dialog = "2"`, `trash = "5"`, `plist = "1"`, `glob = "0.3"`, `jwalk = "0.8"`, `rayon = "1"`, `dirs = "6"`, `libc = "0.2"`, `base64 = "0.22"`. Dev-dep: `tempfile = "3"`. Register the dialog plugin and add `dialog:default` to `src-tauri/capabilities/default.json`.
-  - [ ] 1.5 Copy the theme as described in Context. Build `src/main.ts` with a top tab bar (Lucide icons: `Sparkles` Clean, `Package` Apps, `Gauge` Optimize, `HardDrive` Analyze) that swaps between 4 empty view modules, each exporting `mount(root: HTMLElement): void`. Remember the active tab in `localStorage` under `molesweep.tab`.
-  - [ ] 1.6 Create `scripts/deploy.sh` by copying pi-desktop's and adapting it: `APP=MoleSweep.app`, quit via `osascript -e 'quit app "MoleSweep"'`, wait, then `pkill -f /Applications/MoleSweep.app/` as a fallback. Add `"deploy": "scripts/deploy.sh"` to `package.json`.
-  - [ ] 1.7 Copy `LICENSE` (GPL-3.0) from `/tmp/mole-src/LICENSE`.
-  - [ ] 1.8 Verify: `bun run tauri dev` opens a window with 4 switchable tabs.
+- [x] 1. **Scaffold + repo + shell UI.**
+  - [x] 1.1 Run `git init -b main` in `~/src/mole`. Make the first commit on `main` with only `todo.md` and a `.gitignore` (`node_modules/`, `dist/`, `src-tauri/target/`, `src-tauri/gen/`). Feature branches start from there.
+  - [x] 1.2 Scaffold into a temp dir, **never into `~/src/mole` and never with `--force`**: `cd /tmp && bun create tauri-app molesweep --template vanilla-ts --manager bun --yes` (if the flags differ, run `bun create tauri-app --help`). Copy the result into `~/src/mole` without overwriting `todo.md`.
+  - [x] 1.3 Apply the names/identifier/window size from Decisions in `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`. Copy the `[profile.release]` block from `~/src/pi-desktop/src-tauri/Cargo.toml`.
+  - [x] 1.4 Add deps: `bun add lucide @fontsource-variable/open-sans @tauri-apps/plugin-dialog`. Add these Cargo deps: `serde` (derive), `serde_json`, `tauri-plugin-dialog = "2"`, `trash = "5"`, `plist = "1"`, `glob = "0.3"`, `jwalk = "0.8"`, `rayon = "1"`, `dirs = "6"`, `libc = "0.2"`, `base64 = "0.22"`. Dev-dep: `tempfile = "3"`. Register the dialog plugin and add `dialog:default` to `src-tauri/capabilities/default.json`.
+  - [x] 1.5 Copy the theme as described in Context. Build `src/main.ts` with a top tab bar (Lucide icons: `Sparkles` Clean, `Package` Apps, `Gauge` Optimize, `HardDrive` Analyze) that swaps between 4 empty view modules, each exporting `mount(root: HTMLElement): void`. Remember the active tab in `localStorage` under `molesweep.tab`.
+  - [x] 1.6 Create `scripts/deploy.sh` by copying pi-desktop's and adapting it: `APP=MoleSweep.app`, quit via `osascript -e 'quit app "MoleSweep"'`, wait, then `pkill -f /Applications/MoleSweep.app/` as a fallback. Add `"deploy": "scripts/deploy.sh"` to `package.json`.
+  - [x] 1.7 Copy `LICENSE` (GPL-3.0) from `/tmp/mole-src/LICENSE`.
+  - [x] 1.8 Verify: `bun run tauri dev` opens a window with 4 switchable tabs.
 
 - [ ] 2. **Rust core: safety guard + fs utilities** (`safety.rs`, `fsutil.rs`).
   - [ ] 2.1 `safety::check(path: &Path, home: &Path) -> Result<(), String>` returns `Err(reason)` when any of these is true:
