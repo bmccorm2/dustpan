@@ -93,8 +93,8 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
   - [x] 2.9 Frontend `src/ui.ts`: `fdaBanner()`, which is shown at the top of every tab while `fda_status()` is false and has an "Open System Settings" button; `confirmDialog({title, message, confirmLabel}) -> Promise<boolean>`, a custom modal (do not use `window.confirm`); `formatBytes` (base 1000, matching Finder: `1.2 GB`); `toast()`.
   - [x] 2.10 Tests: one test for each rejection rule, a test that allows `home/Library/Caches/com.foo/x`, and a hard-link dedupe test for `allocated_size`.
 
-- [ ] 3. **Clean backend: rule engine** (`clean/mod.rs`, `clean/rules.rs`).
-  - [ ] 3.1 Types:
+- [x] 3. **Clean backend: rule engine** (`clean/mod.rs`, `clean/rules.rs`).
+  - [x] 3.1 Types:
     ```rust
     pub struct Rule { pub id: &'static str, pub category: Cat, pub label: &'static str,
                       pub globs: &'static [&'static str],   // relative to home
@@ -103,12 +103,12 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
     pub struct CleanItem { id: String, category: Cat, label: String, paths: Vec<String>,
                            size: u64, recommended: bool, blocked_reason: Option<String> }
     ```
-  - [ ] 3.2 `scan(home, running: &HashSet<String>, progress: impl Fn(&str)) -> Vec<CleanItem>`:
+  - [x] 3.2 `scan(home, running: &HashSet<String>, progress: impl Fn(&str)) -> Vec<CleanItem>`:
     - Expand each rule's globs under `home` with the `glob` crate. Drop matches that fail `safety::check` or have 0 bytes. Skip rules with no remaining matches.
     - If `app_bundle` is in `running`, set `blocked_reason = "Quit <AppName> first"` (AppName is the rule label's first word).
     - **Dedupe**: process rules in table order and keep a set of claimed paths. Drop a match if it equals a claimed path or is inside one, so specific rules win over the generic sweep.
     - Sizes are computed in parallel with rayon. Call `progress(label)` once per rule.
-  - [ ] 3.3 Rule table in `rules.rs`, specific rules first:
+  - [x] 3.3 Rule table in `rules.rs`, specific rules first:
     - **Browsers**:
       - Safari: `Library/Caches/com.apple.Safari/*`, `app_bundle` `com.apple.Safari`.
       - Chrome: `Library/Application Support/Google/Chrome/*/Cache/*`, `…/*/Code Cache/*`, `…/*/GPUCache/*`, `…/*/Service Worker/CacheStorage/*`, plus `Library/Caches/Google/Chrome/*`. `app_bundle` `com.google.Chrome`.
@@ -153,8 +153,8 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
       - id = `appcache:<name>`. The label is the installed app's name when `<name>` matches an installed bundle id (use the bundle-id→name map from task 6's `apps::installed_bundle_map(home)`; until task 6 exists, create a stub that returns an empty map). Otherwise the label is `<name>`.
       - If `<name>` is in `running`, set blocked_reason `"In use"`.
       - recommended=true.
-  - [ ] 3.4 Commands: `clean_scan() -> Vec<CleanItem>`, which emits event `clean://progress` with payload `{ label: String }`. Deletion reuses `trash_paths`.
-  - [ ] 3.5 Tests (fake home in tempdir): globs match, dedupe (a Chrome cache path isn't also counted by the generic sweep), a running app gets blocked, `com.apple.*` is skipped in the sweep, zero-byte matches are dropped.
+  - [x] 3.4 Commands: `clean_scan() -> Vec<CleanItem>`, which emits event `clean://progress` with payload `{ label: String }`. Deletion reuses `trash_paths`.
+  - [x] 3.5 Tests (fake home in tempdir): globs match, dedupe (a Chrome cache path isn't also counted by the generic sweep), a running app gets blocked, `com.apple.*` is skipped in the sweep, zero-byte matches are dropped.
 
 - [ ] 4. **Clean UI** (`src/views/clean.ts`).
   - [ ] 4.1 Idle state: big "Scan" button.

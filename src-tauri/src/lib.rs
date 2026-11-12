@@ -1,8 +1,11 @@
+mod apps;
+mod clean;
 mod fsutil;
 mod safety;
 
 use fsutil::ActionResult;
 use std::path::PathBuf;
+use tauri::Emitter;
 
 pub(crate) fn home() -> Result<PathBuf, String> {
     dirs::home_dir().ok_or_else(|| "No home folder".to_string())
@@ -46,6 +49,23 @@ async fn trash_paths(paths: Vec<String>) -> Result<ActionResult, String> {
     .await
 }
 
+#[derive(serde::Serialize, Clone)]
+struct ProgressLabel {
+    label: String,
+}
+
+#[tauri::command]
+async fn clean_scan(app: tauri::AppHandle) -> Result<Vec<clean::CleanItem>, String> {
+    let home = home()?;
+    blocking(move || {
+        let running = fsutil::running_bundle_ids();
+        Ok(clean::scan(&home, &running, |label| {
+            let _ = app.emit("clean://progress", ProgressLabel { label: label.to_string() });
+        }))
+    })
+    .await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -55,6 +75,7 @@ pub fn run() {
             open_fda_settings,
             reveal_in_finder,
             trash_paths,
+            clean_scan,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
