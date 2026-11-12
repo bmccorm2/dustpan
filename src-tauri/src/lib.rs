@@ -66,6 +66,18 @@ async fn clean_scan(app: tauri::AppHandle) -> Result<Vec<clean::CleanItem>, Stri
     .await
 }
 
+#[tauri::command]
+async fn empty_trash() -> Result<ActionResult, String> {
+    let home = home()?;
+    blocking(move || Ok(clean::empty_trash(&home))).await
+}
+
+#[tauri::command]
+async fn trash_size() -> Result<u64, String> {
+    let home = home()?;
+    blocking(move || Ok(clean::trash_size(&home))).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -76,6 +88,8 @@ pub fn run() {
             reveal_in_finder,
             trash_paths,
             clean_scan,
+            empty_trash,
+            trash_size,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

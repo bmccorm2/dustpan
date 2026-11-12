@@ -1,5 +1,7 @@
 //! Clean scanner: expands the rule table, dedupes overlapping paths, sizes everything.
 
+pub mod ai_versions;
+pub mod leftovers;
 pub mod rules;
 
 use crate::{apps, fsutil, safety};
@@ -7,6 +9,7 @@ use rayon::prelude::*;
 use serde::Serialize;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
+use std::time::SystemTime;
 
 #[derive(Serialize, Clone, Copy, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -109,18 +112,29 @@ fn app_name(label: &str) -> &str {
     label.split_whitespace().next().unwrap_or(label)
 }
 
-/// Scans the rule table plus the generic ~/Library/Caches sweep.
-pub fn scan(home: &Path, running: &HashSet<String>, progress: impl Fn(&str) + Sync) -> Vec<CleanItem> {
-    let installed = apps::installed_bundle_map(home);
-    scan_with(home, running, &installed, progress)
+/// What the scanner needs to know about the system (injected so tests can fake it).
+struct Env<'a> {
+    running: &'a HashSet<String>,
+    /// Bundle id -> app name.
+    names: &'a HashMap<String, String>,
+    /// Every installed bundle id.
+    ids: &'a HashSet<String>,
+    has_app: &'a (dyn Fn(&str) -> bool + Sync),
 }
 
-fn scan_with(
-    home: &Path,
-    running: &HashSet<String>,
-    installed: &HashMap<String, String>,
-    progress: impl Fn(&str) + Sync,
-) -> Vec<CleanItem> {
+/// Scans the rule table, AI old versions, the generic ~/Library/Caches sweep,
+/// leftovers and the Trash.
+pub fn scan(home: &Path, running: &HashSet<String>, progress: impl Fn(&str) + Sync) -> Vec<CleanItem> {
+    progress("Finding installed apps");
+    let names = apps::installed_bundle_map(home);
+    let mut ids = leftovers::installed_bundle_ids(home);
+    ids.extend(names.keys().cloned());
+    let env = Env { running, names: &names, ids: &ids, has_app: &leftovers::mdfind_has_app };
+    scan_with(home, &env, progress)
+}
+
+fn scan_with(home: &Path, env: &Env, progress: impl Fn(&str) + Sync) -> Vec<CleanItem> {
+    let (running, installed) = (env.running, env.names);
     let mut claims = Claims::default();
     let mut pending = Vec::new();
 
@@ -174,7 +188,76 @@ fn scan_with(
         });
     }
 
+    pending.extend(ai_versions::scan(home));
+
+    progress("Looking for leftovers of removed apps");
+    for mut p in leftovers::scan(home, env.ids, env.has_app, SystemTime::now()) {
+        // Paths a cache rule already owns stay with that rule.
+        p.paths.retain(|x| !claims.is_claimed(x) && !claims.ancestors.contains(x));
+        if !p.paths.is_empty() {
+            pending.push(p);
+        }
+    }
+
+    if let Some(t) = trash_item(home) {
+        pending.push(t);
+    }
+
     size_items(pending, &progress)
+}
+
+/// Children of ~/.Trash.
+fn trash_children(home: &Path) -> Vec<PathBuf> {
+    let mut v: Vec<PathBuf> = std::fs::read_dir(home.join(".Trash"))
+        .map(|rd| rd.flatten().map(|e| e.path()).collect())
+        .unwrap_or_default();
+    v.sort();
+    v
+}
+
+fn trash_item(home: &Path) -> Option<Pending> {
+    let paths = trash_children(home);
+    (!paths.is_empty()).then(|| Pending {
+        id: "trash".into(),
+        category: Cat::Trash,
+        label: "Trash (permanently deleted)".into(),
+        paths,
+        recommended: false,
+        blocked_reason: None,
+    })
+}
+
+/// Total allocated size of everything in ~/.Trash.
+pub fn trash_size(home: &Path) -> u64 {
+    trash_children(home).par_iter().map(|p| fsutil::allocated_size(p)).sum()
+}
+
+/// Permanently deletes every child of ~/.Trash. This is the only permanent deletion in the app,
+/// and it never touches anything outside ~/.Trash.
+pub fn empty_trash(home: &Path) -> fsutil::ActionResult {
+    let mut res = fsutil::ActionResult::default();
+    let trash = home.join(".Trash");
+    for p in trash_children(home) {
+        let shown = p.to_string_lossy().to_string();
+        if p.parent() != Some(trash.as_path()) {
+            res.fail(shown, "Not in the Trash");
+            continue;
+        }
+        let size = fsutil::allocated_size(&p);
+        let r = match std::fs::symlink_metadata(&p) {
+            Ok(m) if m.is_dir() => std::fs::remove_dir_all(&p),
+            Ok(_) => std::fs::remove_file(&p),
+            Err(e) => Err(e),
+        };
+        match r {
+            Ok(()) => {
+                res.bytes += size;
+                res.done.push(shown);
+            }
+            Err(e) => res.fail(shown, e.to_string()),
+        }
+    }
+    res
 }
 
 /// Sizes items in parallel and drops empty paths and items.
@@ -227,7 +310,8 @@ mod tests {
 
     fn run(h: &Path, running: &[&str]) -> Vec<CleanItem> {
         let running = running.iter().map(|s| s.to_string()).collect();
-        scan_with(h, &running, &HashMap::new(), |_| {})
+        let env = Env { running: &running, names: &HashMap::new(), ids: &HashSet::new(), has_app: &|_| false };
+        scan_with(h, &env, |_| {})
     }
 
     fn item<'a>(items: &'a [CleanItem], id: &str) -> Option<&'a CleanItem> {
@@ -302,11 +386,43 @@ mod tests {
     }
 
     #[test]
+    fn trash_item_and_empty() {
+        let (_t, h) = home();
+        file(&h, ".Trash/a/x");
+        file(&h, ".Trash/b");
+        let items = run(&h, &[]);
+        let t = item(&items, "trash").unwrap();
+        assert_eq!(t.paths.len(), 2);
+        assert!(!t.recommended);
+        assert_eq!(trash_size(&h), t.size);
+        let r = empty_trash(&h);
+        assert_eq!(r.done.len(), 2);
+        assert_eq!(r.bytes, t.size);
+        assert!(h.join(".Trash").exists());
+        assert_eq!(fs::read_dir(h.join(".Trash")).unwrap().count(), 0);
+    }
+
+    #[test]
+    fn leftover_paths_not_double_counted() {
+        let (_t, h) = home();
+        file(&h, "Library/Caches/com.gone.app/x");
+        file(&h, "Library/Application Support/com.gone.app/y");
+        for p in ["Library/Caches/com.gone.app/x", "Library/Caches/com.gone.app", "Library/Application Support/com.gone.app/y", "Library/Application Support/com.gone.app"] {
+            leftovers::backdate(&h.join(p), 90);
+        }
+        let items = run(&h, &[]);
+        assert!(item(&items, "appcache:com.gone.app").is_some());
+        let l = item(&items, "leftover:com.gone.app").unwrap();
+        assert_eq!(l.paths, vec![h.join("Library/Application Support/com.gone.app").to_string_lossy()]);
+    }
+
+    #[test]
     fn sweep_uses_installed_name() {
         let (_t, h) = home();
         file(&h, "Library/Caches/com.foo.bar/x");
         let installed = HashMap::from([("com.foo.bar".to_string(), "Foo".to_string())]);
-        let items = scan_with(&h, &HashSet::new(), &installed, |_| {});
+        let env = Env { running: &HashSet::new(), names: &installed, ids: &HashSet::new(), has_app: &|_| false };
+        let items = scan_with(&h, &env, |_| {});
         assert_eq!(item(&items, "appcache:com.foo.bar").unwrap().label, "Foo");
     }
 }

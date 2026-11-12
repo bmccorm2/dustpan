@@ -167,8 +167,8 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
     - Blocked items are greyed out with the reason, and their checkbox is disabled.
   - [x] 4.4 On confirm, call `trash_paths` with the union of the selected items' paths. Then show a result view: "Moved <bytes> to Trash", a failure count that expands into a list of path + reason, a "Scan again" button, and an "Empty Trash (<size>)" button. That button is wired up in task 5.
 
-- [ ] 5. **Clean: leftovers, AI old versions, Trash** (`clean/leftovers.rs`, `clean/ai_versions.rs`, Trash in `clean/mod.rs`).
-  - [ ] 5.1 **Leftovers** (`Cat::Leftovers`, recommended=**false**):
+- [x] 5. **Clean: leftovers, AI old versions, Trash** (`clean/leftovers.rs`, `clean/ai_versions.rs`, Trash in `clean/mod.rs`).
+  - [x] 5.1 **Leftovers** (`Cat::Leftovers`, recommended=**false**):
     - Scan these dirs one level deep: `home/Library/{Application Support, Caches, Containers, Preferences, Saved Application State, HTTPStorages, WebKit, Logs, Cookies}` and `home/Library/LaunchAgents`.
     - Take the candidate bundle id from the entry name: strip `.plist`, `.savedState`, `.binarycookies`. The name must look like reverse-DNS (`^[A-Za-z0-9-]+(\.[A-Za-z0-9-]+){2,}$`).
     - An entry is an orphan only if **all** of these hold:
@@ -180,13 +180,13 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
       - It isn't `com.bryan.molesweep`.
     - Group results into one `CleanItem` per bundle id, with id `leftover:<bundle id>` and label `<bundle id>`.
     - Port the extra checks from `is_bundle_orphaned` in `/tmp/mole-src/lib/clean/apps.sh` only where they are simple.
-  - [ ] 5.2 **AI old versions** (`Cat::Ai`, recommended=true). For each `(versions_root, active_symlink)` in `[(".local/share/claude/versions", ".local/bin/claude"), (".local/share/cursor-agent/versions", ".local/bin/cursor-agent"), (".copilot/pkg/universal", ".local/bin/copilot")]`:
+  - [x] 5.2 **AI old versions** (`Cat::Ai`, recommended=true). For each `(versions_root, active_symlink)` in `[(".local/share/claude/versions", ".local/bin/claude"), (".local/share/cursor-agent/versions", ".local/bin/cursor-agent"), (".copilot/pkg/universal", ".local/bin/copilot")]`:
     - Resolve the symlink with `fs::canonicalize`. If it is missing or broken, skip the tool.
     - The active entry is the child of `versions_root` that contains the resolved target.
     - Keep the active entry and the newest other child by mtime. Every other child becomes a path of the item `aiver:<tool>` with label `<Tool> old versions`.
-  - [ ] 5.3 **Trash** (`Cat::Trash`, recommended=**false**): item `trash` with the children of `home/.Trash`. It is labeled "Trash (permanently deleted)". **Do not** send it to `trash_paths`: the frontend calls `empty_trash()`, which runs `fs::remove_dir_all`/`remove_file` on each child of `home/.Trash` and returns an `ActionResult`.
-  - [ ] 5.4 Commands: `empty_trash() -> ActionResult` and `trash_size() -> u64`. Wire the "Empty Trash" button from task 4 to these, behind a confirm dialog that says "This permanently deletes everything in the Trash."
-  - [ ] 5.5 Tests: an orphan is detected (fake installed set; backdate mtimes with `libc::utimes`, no extra crate); a recently modified entry is kept; `com.apple.x` is kept; an installed id is kept; AI versions keep the active entry plus 1 newest.
+  - [x] 5.3 **Trash** (`Cat::Trash`, recommended=**false**): item `trash` with the children of `home/.Trash`. It is labeled "Trash (permanently deleted)". **Do not** send it to `trash_paths`: the frontend calls `empty_trash()`, which runs `fs::remove_dir_all`/`remove_file` on each child of `home/.Trash` and returns an `ActionResult`.
+  - [x] 5.4 Commands: `empty_trash() -> ActionResult` and `trash_size() -> u64`. Wire the "Empty Trash" button from task 4 to these, behind a confirm dialog that says "This permanently deletes everything in the Trash."
+  - [x] 5.5 Tests: an orphan is detected (fake installed set; backdate mtimes with `libc::utimes`, no extra crate); a recently modified entry is kept; `com.apple.x` is kept; an installed id is kept; AI versions keep the active entry plus 1 newest.
 
 - [ ] 6. **Apps → Uninstall** (`apps.rs`, `src/views/apps.ts`).
   - [ ] 6.1 `installed_apps(home) -> Vec<AppInfo { name, bundle_id, version, path, size, icon: Option<String> }>`:
