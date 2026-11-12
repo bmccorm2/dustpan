@@ -2,6 +2,7 @@ mod apps;
 mod clean;
 mod fsutil;
 mod safety;
+mod startup;
 
 use fsutil::ActionResult;
 use std::path::PathBuf;
@@ -108,6 +109,24 @@ async fn uninstall_app(
     .await
 }
 
+#[tauri::command]
+async fn startup_list() -> Result<startup::StartupList, String> {
+    let home = home()?;
+    blocking(move || Ok(startup::list(&home))).await
+}
+
+#[tauri::command]
+async fn startup_set_enabled(id: String, enabled: bool) -> Result<(), String> {
+    let home = home()?;
+    blocking(move || startup::set_enabled(&home, &id, enabled)).await
+}
+
+#[tauri::command]
+async fn startup_remove(id: String) -> Result<ActionResult, String> {
+    let home = home()?;
+    blocking(move || startup::remove(&home, &id)).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -123,6 +142,9 @@ pub fn run() {
             apps_list,
             app_leftovers,
             uninstall_app,
+            startup_list,
+            startup_set_enabled,
+            startup_remove,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

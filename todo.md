@@ -215,23 +215,23 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
     - Selecting an app shows a detail pane with leftover rows that have checkboxes, all checked by default, plus the app row (checked, with an option to uncheck so only the data is removed).
     - Button "Uninstall · <total>" → confirm → result toast → refresh the list.
 
-- [ ] 7. **Apps → Startup** (`startup.rs`, Startup segment in `apps.ts`).
-  - [ ] 7.1 `StartupItem { id, kind: "userAgent"|"globalAgent"|"globalDaemon"|"loginItem", label, path, program: Option<String>, enabled: bool, broken: bool, editable: bool }`.
-  - [ ] 7.2 Launch items:
+- [x] 7. **Apps → Startup** (`startup.rs`, Startup segment in `apps.ts`).
+  - [x] 7.1 `StartupItem { id, kind: "userAgent"|"globalAgent"|"globalDaemon"|"loginItem", label, path, program: Option<String>, enabled: bool, broken: bool, editable: bool }`.
+  - [x] 7.2 Launch items:
     - Read every `*.plist` in `home/Library/LaunchAgents` (userAgent, editable), `/Library/LaunchAgents` (globalAgent, read-only), and `/Library/LaunchDaemons` (globalDaemon, read-only).
     - `label` = `Label` key or the file stem. `program` = `Program` or `ProgramArguments[0]`.
     - `broken` = program is an absolute path that doesn't exist.
     - `enabled` = false if `launchctl print-disabled gui/<uid>` (for userAgent) lists the label as disabled. Accept both `"label" => disabled` and `"label" => true`. Otherwise true.
-  - [ ] 7.3 Login items: run `osascript -e 'tell application "System Events" to get {name, path} of every login item'` and parse the two comma-separated lists. kind loginItem, editable, enabled=true, broken = path doesn't exist. If osascript fails (Automation denied), return an empty list plus a `warning` string. The command returns `{ items, warning: Option<String> }`.
-  - [ ] 7.4 `uid` = `unsafe { libc::getuid() }`.
-  - [ ] 7.5 Actions (userAgent only, unless noted):
+  - [x] 7.3 Login items: run `osascript -e 'tell application "System Events" to get {name, path} of every login item'` and parse the two comma-separated lists. kind loginItem, editable, enabled=true, broken = path doesn't exist. If osascript fails (Automation denied), return an empty list plus a `warning` string. The command returns `{ items, warning: Option<String> }`.
+  - [x] 7.4 `uid` = `unsafe { libc::getuid() }`.
+  - [x] 7.5 Actions (userAgent only, unless noted):
     - Disable: `launchctl disable gui/<uid>/<label>`, then `launchctl bootout gui/<uid>/<label>` (ignore bootout errors).
     - Enable: `launchctl enable gui/<uid>/<label>`, then `launchctl bootstrap gui/<uid> <path>` (ignore an "already loaded" error).
     - Remove: disable, then `trash_paths([path])`.
     - loginItem Remove: `osascript -e 'tell application "System Events" to delete login item "<name>"'`.
-  - [ ] 7.6 Commands: `startup_list`, `startup_set_enabled(id, enabled)`, `startup_remove(id)`. `id` = `<kind>:<path or name>`.
-  - [ ] 7.7 UI: a filter (All / Enabled / Disabled / Broken), grouped list (Login items, My background services, System agents, System daemons), and a "Broken" badge in `--error`. Editable rows get an enable toggle and a Remove button (with confirm). Read-only rows get only Reveal. Show the warning banner when it is present.
-  - [ ] 7.8 Tests: the `print-disabled` parser (both formats); plist parsing and broken detection with temp plists.
+  - [x] 7.6 Commands: `startup_list`, `startup_set_enabled(id, enabled)`, `startup_remove(id)`. `id` = `<kind>:<path or name>`.
+  - [x] 7.7 UI: a filter (All / Enabled / Disabled / Broken), grouped list (Login items, My background services, System agents, System daemons), and a "Broken" badge in `--error`. Editable rows get an enable toggle and a Remove button (with confirm). Read-only rows get only Reveal. Show the warning banner when it is present.
+  - [x] 7.8 Tests: the `print-disabled` parser (both formats); plist parsing and broken detection with temp plists.
 
 - [ ] 8. **Optimize** (`optimize.rs`, `src/views/optimize.ts`).
   - [ ] 8.1 `TaskInfo { id, title, description, needs_admin }`, `TaskResult { id, status: "done"|"skipped"|"failed", message }`. Tasks:

@@ -38,6 +38,24 @@ export interface Leftover {
   kind: string;
 }
 
+export type StartupKind = "userAgent" | "globalAgent" | "globalDaemon" | "loginItem";
+
+export interface StartupItem {
+  id: string;
+  kind: StartupKind;
+  label: string;
+  path: string;
+  program: string | null;
+  enabled: boolean;
+  broken: boolean;
+  editable: boolean;
+}
+
+export interface StartupList {
+  items: StartupItem[];
+  warning: string | null;
+}
+
 export const api = {
   fdaStatus: () => invoke<boolean>("fda_status"),
   openFdaSettings: () => invoke<void>("open_fda_settings"),
@@ -50,4 +68,7 @@ export const api = {
   appLeftovers: (bundleId: string, name: string) => invoke<Leftover[]>("app_leftovers", { bundleId, name }),
   uninstallApp: (bundleId: string, name: string, appPath: string | null, leftoverPaths: string[]) =>
     invoke<ActionResult>("uninstall_app", { bundleId, name, appPath, leftoverPaths }),
+  startupList: () => invoke<StartupList>("startup_list"),
+  startupSetEnabled: (id: string, enabled: boolean) => invoke<void>("startup_set_enabled", { id, enabled }),
+  startupRemove: (id: string) => invoke<ActionResult>("startup_remove", { id }),
 };
