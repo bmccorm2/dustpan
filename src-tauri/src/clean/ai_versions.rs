@@ -50,7 +50,7 @@ fn old_versions(home: &Path, root: &Path, link: &Path) -> Vec<PathBuf> {
             (m.unwrap_or(SystemTime::UNIX_EPOCH), e.path())
         })
         .collect();
-    others.sort_by(|a, b| b.0.cmp(&a.0));
+    others.sort_by_key(|o| std::cmp::Reverse(o.0));
     others
         .into_iter()
         .skip(1)

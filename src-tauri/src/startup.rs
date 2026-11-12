@@ -123,7 +123,7 @@ fn parse_login_items(out: &str) -> Option<Vec<(String, String)>> {
         return Some(vec![]);
     }
     let parts: Vec<&str> = out.split(", ").collect();
-    if parts.len() % 2 != 0 {
+    if !parts.len().is_multiple_of(2) {
         return None;
     }
     let (names, paths) = parts.split_at(parts.len() / 2);

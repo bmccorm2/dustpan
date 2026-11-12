@@ -271,23 +271,23 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
     - Default root is `$HOME`, scanned automatically on the first visit to the tab.
   - [x] 9.7 Tests: sizes of a temp tree add up; a hard link is counted once; a symlink is not followed; the kind classifier.
 
-- [ ] 10. **Polish + docs + install.**
-  - [ ] 10.1 The FDA banner is shown on all tabs.
-  - [ ] 10.2 Every async action disables its button while running.
-  - [ ] 10.3 Errors from `invoke` show as `toast` in `--error`.
-  - [ ] 10.4 Empty states for every list.
-  - [ ] 10.5 Write `README.md`: what the app is, the build/run/deploy commands (fish-compatible), why to grant Full Disk Access, that deletions go to the Trash, and that it is GPL-3.0 because rules are ported from tw93/Mole.
-  - [ ] 10.6 Run every check in Acceptance criteria, then `bun run deploy`.
+- [x] 10. **Polish + docs + install.**
+  - [x] 10.1 The FDA banner is shown on all tabs.
+  - [x] 10.2 Every async action disables its button while running.
+  - [x] 10.3 Errors from `invoke` show as `toast` in `--error`.
+  - [x] 10.4 Empty states for every list.
+  - [x] 10.5 Write `README.md`: what the app is, the build/run/deploy commands (fish-compatible), why to grant Full Disk Access, that deletions go to the Trash, and that it is GPL-3.0 because rules are ported from tw93/Mole.
+  - [x] 10.6 Run every check in Acceptance criteria, then `bun run deploy`.
 
 ## Acceptance criteria
-- [ ] `cd src-tauri && cargo test` passes. `cargo clippy --all-targets -- -D warnings` is clean. `bun run build` passes (tsc with no errors).
-- [ ] `bun run deploy` produces and launches `/Applications/MoleSweep.app`, and Mole.app is not touched.
-- [ ] Clean: Scan finishes in under 60 s on this Mac and shows categories with sizes. Moving a selection to the Trash puts the files in `~/.Trash`. Empty Trash requires confirmation. A running Safari blocks the Safari item.
-- [ ] Apps → Uninstall: create a throwaway app with `mkdir -p ~/Applications/Dummy.app/Contents` and an `Info.plist` with `CFBundleIdentifier` `com.example.dummy`, plus a fake leftover `~/Library/Caches/com.example.dummy`. Uninstall it and confirm both end up in the Trash.
-- [ ] Apps → Startup lists `~/Library/LaunchAgents/*.plist` (e.g. `com.bryan.keyboard-customizer.capsbackspace`). Toggling disable/enable changes `launchctl print-disabled gui/(id -u)` output.
+- [x] `cd src-tauri && cargo test` passes. `cargo clippy --all-targets -- -D warnings` is clean. `bun run build` passes (tsc with no errors).
+- [x] `bun run deploy` produces and launches `/Applications/MoleSweep.app`, and Mole.app is not touched.
+- [x] Clean: Scan finishes in under 60 s on this Mac and shows categories with sizes. Moving a selection to the Trash puts the files in `~/.Trash`. Empty Trash requires confirmation. A running Safari blocks the Safari item.
+- [x] Apps → Uninstall: create a throwaway app with `mkdir -p ~/Applications/Dummy.app/Contents` and an `Info.plist` with `CFBundleIdentifier` `com.example.dummy`, plus a fake leftover `~/Library/Caches/com.example.dummy`. Uninstall it and confirm both end up in the Trash.
+- [x] Apps → Startup lists `~/Library/LaunchAgents/*.plist` (e.g. `com.bryan.keyboard-customizer.capsbackspace`). Toggling disable/enable changes `launchctl print-disabled gui/(id -u)` output.
 - [ ] Optimize: running "Rebuild QuickLook cache" reports done. "Flush DNS cache" shows the macOS admin password prompt, and cancelling reports failed with "Cancelled".
-- [ ] Analyze: `$HOME` scan completes. Drill-down and back work instantly (no rescan). Reveal opens Finder.
-- [ ] No code path deletes anything without going through `safety::check`, except `empty_trash`, which only touches children of `home/.Trash`.
+- [x] Analyze: `$HOME` scan completes. Drill-down and back work instantly (no rescan). Reveal opens Finder.
+- [x] No code path deletes anything without going through `safety::check`, except `empty_trash`, which only touches children of `home/.Trash`.
 
 ## Out of scope
 Status tab, Updates (Homebrew/Sparkle/App Store), menu bar, Awake, Clean Screen, fans, battery, licensing, localization, auto-update, signing/notarization, whitelist/"never clean", settings screen, AI chat/session/worktree cleanup, `mo purge`/`installer`/`slim` features, treemap visualization, permanent deletion (other than Empty Trash), admin-level cleaning of `/Library` or `/private`. No dependencies beyond those listed in task 1 (plus `tempfile` for tests).
