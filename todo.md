@@ -156,16 +156,16 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
   - [x] 3.4 Commands: `clean_scan() -> Vec<CleanItem>`, which emits event `clean://progress` with payload `{ label: String }`. Deletion reuses `trash_paths`.
   - [x] 3.5 Tests (fake home in tempdir): globs match, dedupe (a Chrome cache path isn't also counted by the generic sweep), a running app gets blocked, `com.apple.*` is skipped in the sweep, zero-byte matches are dropped.
 
-- [ ] 4. **Clean UI** (`src/views/clean.ts`).
-  - [ ] 4.1 Idle state: big "Scan" button.
-  - [ ] 4.2 Scanning state: spinner in `--running` color plus the current progress label.
-  - [ ] 4.3 Results state:
+- [x] 4. **Clean UI** (`src/views/clean.ts`).
+  - [x] 4.1 Idle state: big "Scan" button.
+  - [x] 4.2 Scanning state: spinner in `--running` color plus the current progress label.
+  - [x] 4.3 Results state:
     - Header shows the total selected size and a primary button "Move to Trash · <size>".
     - Preset links: Recommended (default) / All / None.
     - Collapsible category sections in this order: App caches, Browsers, Developer tools, AI tools, Logs, Leftovers, Trash. Each shows its category total.
     - Each item row: checkbox, label, size. Click the chevron to expand its paths, max 200 shown, each with a Reveal button.
     - Blocked items are greyed out with the reason, and their checkbox is disabled.
-  - [ ] 4.4 On confirm, call `trash_paths` with the union of the selected items' paths. Then show a result view: "Moved <bytes> to Trash", a failure count that expands into a list of path + reason, a "Scan again" button, and an "Empty Trash (<size>)" button. That button is wired up in task 5.
+  - [x] 4.4 On confirm, call `trash_paths` with the union of the selected items' paths. Then show a result view: "Moved <bytes> to Trash", a failure count that expands into a list of path + reason, a "Scan again" button, and an "Empty Trash (<size>)" button. That button is wired up in task 5.
 
 - [ ] 5. **Clean: leftovers, AI old versions, Trash** (`clean/leftovers.rs`, `clean/ai_versions.rs`, Trash in `clean/mod.rs`).
   - [ ] 5.1 **Leftovers** (`Cat::Leftovers`, recommended=**false**):
