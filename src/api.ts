@@ -71,6 +71,23 @@ export interface TaskResult {
   message: string;
 }
 
+export type EntryKind = "image" | "video" | "audio" | "archive" | "diskImage" | "app" | "folder" | "other";
+
+export interface Entry {
+  name: string;
+  path: string;
+  size: number;
+  isDir: boolean;
+  kind: EntryKind;
+}
+
+export interface DirListing {
+  path: string;
+  total: number;
+  unreadable: number;
+  entries: Entry[];
+}
+
 export const api = {
   fdaStatus: () => invoke<boolean>("fda_status"),
   openFdaSettings: () => invoke<void>("open_fda_settings"),
@@ -88,4 +105,7 @@ export const api = {
   startupRemove: (id: string) => invoke<ActionResult>("startup_remove", { id }),
   optimizeTasks: () => invoke<TaskInfo[]>("optimize_tasks"),
   optimizeRun: (ids: string[]) => invoke<TaskResult[]>("optimize_run", { ids }),
+  analyzeScan: (root: string) => invoke<void>("analyze_scan", { root }),
+  analyzeList: (path: string) => invoke<DirListing>("analyze_list", { path }),
+  analyzeTrash: (path: string) => invoke<ActionResult>("analyze_trash", { path }),
 };

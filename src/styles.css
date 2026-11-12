@@ -174,3 +174,32 @@ input.switch:disabled { opacity: 0.5; }
 .st-skipped { color: var(--text-dim); }
 .st-failed { color: var(--error); }
 .st-msg { overflow: hidden; text-overflow: ellipsis; }
+
+/* Analyze */
+.crumbs { display: flex; align-items: center; gap: 2px; min-width: 0; overflow: hidden; }
+.crumb {
+  font: inherit; color: var(--text-dim); background: none; border: none; border-radius: 4px;
+  padding: 2px 6px; cursor: pointer; white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis;
+}
+.crumb:hover { color: var(--text); background: var(--bg-elev); }
+.crumb.last { color: var(--text); font-weight: 600; }
+.crumb-sep { color: var(--text-faint); }
+.analyze-list { padding: 4px 8px; outline: none; }
+.entry {
+  display: grid; grid-template-columns: 20px minmax(0, 1fr) minmax(120px, 30%) 80px; align-items: center;
+  gap: 10px; padding: 4px 10px; border-radius: 6px; cursor: default;
+}
+.entry:hover { background: var(--bg-elev); }
+.entry.current { background: color-mix(in srgb, var(--accent) 14%, var(--bg-elev)); box-shadow: inset 3px 0 var(--accent); }
+.entry-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kind-icon { color: var(--text-dim); }
+.kind-icon.k-folder, .kind-icon.k-app { color: var(--running); }
+.bar { height: 8px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; }
+.bar-fill { display: block; height: 100%; background: var(--accent); border-radius: 4px; min-width: 1px; }
+.fda-hint .link { font-size: 12px; }
+.context-menu { position: fixed; z-index: 50; min-width: 180px; padding: 4px; display: flex; flex-direction: column; }
+.menu-item {
+  font: inherit; text-align: left; color: var(--text); background: none; border: none;
+  border-radius: 5px; padding: 5px 10px; cursor: pointer;
+}
+.menu-item:hover { background: var(--accent); color: #fff; }

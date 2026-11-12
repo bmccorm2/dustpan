@@ -1,3 +1,4 @@
+mod analyze;
 mod apps;
 mod clean;
 mod fsutil;
@@ -150,10 +151,43 @@ async fn optimize_run(app: tauri::AppHandle, ids: Vec<String>) -> Result<Vec<opt
     .await
 }
 
+#[tauri::command]
+async fn analyze_scan(app: tauri::AppHandle, root: String) -> Result<(), String> {
+    blocking(move || {
+        let emitter = app.clone();
+        let scan = analyze::scan(&PathBuf::from(root), |p| {
+            let _ = emitter.emit("analyze://progress", p);
+        })?;
+        *app.state::<analyze::AnalyzeState>().0.lock().map_err(|e| e.to_string())? = Some(scan);
+        Ok(())
+    })
+    .await
+}
+
+#[tauri::command]
+fn analyze_list(state: tauri::State<'_, analyze::AnalyzeState>, path: String) -> Result<analyze::DirListing, String> {
+    let guard = state.0.lock().map_err(|e| e.to_string())?;
+    let scan = guard.as_ref().ok_or("Not scanned yet")?;
+    analyze::list(scan, &PathBuf::from(path))
+}
+
+#[tauri::command]
+async fn analyze_trash(app: tauri::AppHandle, path: String) -> Result<ActionResult, String> {
+    let home = home()?;
+    blocking(move || {
+        let state = app.state::<analyze::AnalyzeState>();
+        let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+        let scan = guard.as_mut().ok_or("Not scanned yet")?;
+        Ok(analyze::trash(scan, &PathBuf::from(path), &home))
+    })
+    .await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .manage(analyze::AnalyzeState::default())
         .invoke_handler(tauri::generate_handler![
             fda_status,
             open_fda_settings,
@@ -170,6 +204,9 @@ pub fn run() {
             startup_remove,
             optimize_tasks,
             optimize_run,
+            analyze_scan,
+            analyze_list,
+            analyze_trash,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

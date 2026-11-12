@@ -244,16 +244,16 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
   - [x] 8.3 UI: list of tasks with checkboxes (all checked by default), descriptions, a lock icon (`Lock`) on admin tasks, and a "Run selected" button. Each row shows live status (spinner in `--running`, ✓ in `--ok`, skipped in `--text-dim`, failed in `--error`) plus its message.
   - [x] 8.4 Tests: saved-state age filtering with a temp home.
 
-- [ ] 9. **Analyze** (`analyze.rs`, `src/views/analyze.ts`).
-  - [ ] 9.1 `AnalyzeState` (Tauri managed state, `Mutex`) stores `root: PathBuf` and `dir_sizes: HashMap<PathBuf, u64>`.
-  - [ ] 9.2 `analyze_scan(root: String)`:
+- [x] 9. **Analyze** (`analyze.rs`, `src/views/analyze.ts`).
+  - [x] 9.1 `AnalyzeState` (Tauri managed state, `Mutex`) stores `root: PathBuf` and `dir_sizes: HashMap<PathBuf, u64>`.
+  - [x] 9.2 `analyze_scan(root: String)`:
     - Do one `jwalk` walk of `root` that does not follow symlinks and stays on `root`'s `dev` (skip entries on other devices).
     - Add each file's `blocks*512` to every ancestor directory up to `root`. Dedupe hard links by `(dev, ino)`.
     - Count unreadable dirs.
     - Emit `analyze://progress { files, bytes }` at most every 250 ms.
     - Return when done.
-  - [ ] 9.3 `analyze_list(path) -> DirListing { path, total, unreadable: u32, entries: Vec<Entry { name, path, size, is_dir, kind }> }`. List direct children; dir sizes come from `dir_sizes`, file sizes from metadata. Sort by size descending.
-  - [ ] 9.4 `kind` comes from the extension:
+  - [x] 9.3 `analyze_list(path) -> DirListing { path, total, unreadable: u32, entries: Vec<Entry { name, path, size, is_dir, kind }> }`. List direct children; dir sizes come from `dir_sizes`, file sizes from metadata. Sort by size descending.
+  - [x] 9.4 `kind` comes from the extension:
     - image: png jpg jpeg heic gif webp tiff raw
     - video: mp4 mov mkv avi m4v
     - audio: mp3 m4a wav flac aac
@@ -262,14 +262,14 @@ Sub-steps: tick each sub-step box (e.g. `3.2`) as soon as it is done, and tick t
     - app: `.app` directory
     - folder: other directories
     - other: everything else
-  - [ ] 9.5 Command `analyze_trash(path)` calls `trash_paths([path])`. On success, subtract the size from all cached ancestors.
-  - [ ] 9.6 UI:
+  - [x] 9.5 Command `analyze_trash(path)` calls `trash_paths([path])`. On success, subtract the size from all cached ancestors.
+  - [x] 9.6 UI:
     - Header: breadcrumb (clickable segments from root), a "Choose folder…" button (`@tauri-apps/plugin-dialog` `open({ directory: true })`), and a "Rescan" button.
     - Body: rows with a kind icon (Lucide `Folder`, `Image`, `Film`, `Music`, `Archive`, `Disc`, `AppWindow`, `File`), the name, a size bar (width = size / largest entry, filled with `--accent`), and the size. Double-click a folder to drill in; Backspace goes up.
     - Right-click a row to open a small context menu: Reveal in Finder / Move to Trash (with confirm).
     - Footer: "<n> items · <total> · <unreadable> folders unreadable", plus an FDA hint when unreadable > 0 and FDA is missing.
     - Default root is `$HOME`, scanned automatically on the first visit to the tab.
-  - [ ] 9.7 Tests: sizes of a temp tree add up; a hard link is counted once; a symlink is not followed; the kind classifier.
+  - [x] 9.7 Tests: sizes of a temp tree add up; a hard link is counted once; a symlink is not followed; the kind classifier.
 
 - [ ] 10. **Polish + docs + install.**
   - [ ] 10.1 The FDA banner is shown on all tabs.
