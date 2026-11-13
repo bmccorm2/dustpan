@@ -46,7 +46,7 @@ pub struct StartupList {
     pub warning: Option<String>,
 }
 
-const LOGIN_WARNING: &str = "Login items can't be read. Allow MoleSweep to control System Events in System Settings › Privacy & Security › Automation.";
+const LOGIN_WARNING: &str = "Login items can't be read. Allow Dustpan to control System Events in System Settings › Privacy & Security › Automation.";
 
 /// Labels listed as disabled by `launchctl print-disabled`.
 /// Accepts both `"label" => disabled` and `"label" => true`.

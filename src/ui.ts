@@ -110,7 +110,7 @@ export function fdaBanner(): HTMLElement {
     el(
       "span",
       {},
-      "MoleSweep doesn't have Full Disk Access, so some caches and app data can't be read. ",
+      "Dustpan doesn't have Full Disk Access, so some caches and app data can't be read. ",
     ),
     el("button.btn", { onclick: () => api.openFdaSettings().catch(toastError) }, "Open System Settings"),
   );

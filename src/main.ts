@@ -20,7 +20,7 @@ const TABS: Tab[] = [
   { id: "optimize", label: "Optimize", icon: Gauge, view: optimize },
   { id: "analyze", label: "Analyze", icon: HardDrive, view: analyze },
 ];
-const KEY = "molesweep.tab";
+const KEY = "dustpan.tab";
 
 const app = document.getElementById("app")!;
 const bar = el("nav.tabbar");

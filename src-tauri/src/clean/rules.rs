@@ -114,4 +114,4 @@ pub const RULES: &[Rule] = &[
 ];
 
 /// Children of ~/Library/Caches skipped by the generic sweep (plus our own icon cache).
-pub const SWEEP_SKIP: &[&str] = &["CloudKit", "FamilyCircle", "GeoServices", "com.bryan.molesweep"];
+pub const SWEEP_SKIP: &[&str] = &["CloudKit", "FamilyCircle", "GeoServices", "com.bryan.dustpan"];

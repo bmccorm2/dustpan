@@ -3,7 +3,7 @@ import { api, type AppInfo, type Leftover } from "../api";
 import { busy, confirmDialog, el, formatBytes, icon, toast, toastError } from "../ui";
 import * as startup from "./startup";
 
-const SEG_KEY = "molesweep.appsSegment";
+const SEG_KEY = "dustpan.appsSegment";
 
 export function mount(root: HTMLElement): void {
   root.classList.add("apps");

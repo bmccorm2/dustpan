@@ -23,7 +23,7 @@ const SCAN_DIRS: &[&str] = &[
 ];
 
 const STALE_DAYS: u64 = 30;
-const SELF_ID: &str = "com.bryan.molesweep";
+const SELF_ID: &str = "com.bryan.dustpan";
 
 /// Never treat these ids as orphans (simple subset of Mole's protection list).
 const KEEP_PREFIXES: &[&str] = &[
@@ -292,7 +292,7 @@ mod tests {
         entry(&h, "Library/Caches/com.here.app.helper", 60);
         entry(&h, "Library/Caches/com.found.app", 60);
         entry(&h, "Library/Caches/NotReverseDns", 60);
-        entry(&h, "Library/Caches/com.bryan.molesweep", 60);
+        entry(&h, "Library/Caches/com.bryan.dustpan", 60);
         entry(&h, "Library/Caches/com.1password.x", 60);
         let installed = ["com.here.app".to_string()].into_iter().collect();
         let items = scan(&h, &installed, &|id| id == "com.found.app", SystemTime::now());

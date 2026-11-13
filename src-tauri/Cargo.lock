@@ -751,6 +751,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92773504d58c093f6de2459af4af33faa518c13451eb8f2b5698ed3d36e7c813"
 
 [[package]]
+name = "dustpan"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "dirs 6.0.0",
+ "glob",
+ "jwalk",
+ "libc",
+ "plist",
+ "rayon",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tempfile",
+ "trash",
+]
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1900,26 +1920,6 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "molesweep"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "dirs 6.0.0",
- "glob",
- "jwalk",
- "libc",
- "plist",
- "rayon",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tempfile",
- "trash",
 ]
 
 [[package]]

@@ -1,4 +1,4 @@
-//! Path guard. Every deletion in MoleSweep goes through `check` first.
+//! Path guard. Every deletion in Dustpan goes through `check` first.
 //! Never widen these rules to make a caller or test pass.
 
 use std::path::{Component, Path, PathBuf};

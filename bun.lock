@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "molesweep",
+      "name": "dustpan",
       "dependencies": {
         "@fontsource-variable/open-sans": "^5.3.0",
         "@tauri-apps/api": "^2",

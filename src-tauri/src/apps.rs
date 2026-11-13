@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-const SELF_ID: &str = "com.bryan.molesweep";
+const SELF_ID: &str = "com.bryan.dustpan";
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -357,7 +357,7 @@ mod smoke {
     fn real_apps() {
         let h = dirs::home_dir().unwrap();
         let t = std::time::Instant::now();
-        let apps = super::installed_apps(&h, &std::env::temp_dir().join("molesweep-icons"));
+        let apps = super::installed_apps(&h, &std::env::temp_dir().join("dustpan-icons"));
         let with_icon = apps.iter().filter(|a| a.icon.is_some()).count();
         for a in apps.iter().filter(|a| a.icon.is_none()) { println!("no icon: {} {}", a.name, a.path); }
         println!("{} apps, {} with icons, {:?}", apps.len(), with_icon, t.elapsed());

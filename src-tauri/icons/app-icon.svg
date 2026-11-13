@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#363a43"/>
+      <stop offset="1" stop-color="#1f2227"/>
+    </linearGradient>
+    <linearGradient id="pan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff9a45"/>
+      <stop offset="1" stop-color="#e05f00"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b84a00"/>
+      <stop offset="1" stop-color="#d45a00"/>
+    </linearGradient>
+    <linearGradient id="handle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffab66"/>
+      <stop offset="1" stop-color="#f06c00"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- macOS squircle tile -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <rect x="101.5" y="101.5" width="821" height="821" rx="183.5" fill="none" stroke="#4a4f5a" stroke-width="3"/>
+
+  <g transform="rotate(-18 512 560)" filter="url(#shadow)">
+    <!-- handle -->
+    <rect x="477" y="236" width="70" height="250" rx="35" fill="url(#handle)"/>
+    <circle cx="512" cy="286" r="14" fill="#2a2d34"/>
+    <!-- pan body -->
+    <path d="M378 462 H646 Q676 462 686 490 L770 700 Q780 728 750 728 H274 Q244 728 254 700 L338 490 Q348 462 378 462 Z" fill="url(#pan)"/>
+    <!-- scoop floor -->
+    <path d="M392 500 H632 Q648 500 654 515 L716 676 Q720 688 706 688 H318 Q304 688 308 676 L370 515 Q376 500 392 500 Z" fill="url(#floor)"/>
+    <!-- front lip -->
+    <rect x="238" y="712" width="548" height="34" rx="17" fill="#ffb37a"/>
+  </g>
+
+  <!-- dust being swept in -->
+  <g fill="#9c9ea3">
+    <circle cx="742" cy="768" r="14"/>
+    <circle cx="786" cy="736" r="9"/>
+    <circle cx="776" cy="792" r="7"/>
+  </g>
+
+  <!-- sparkles -->
+  <g fill="#00b9e4">
+    <path d="M736 250 Q746 304 800 314 Q746 324 736 378 Q726 324 672 314 Q726 304 736 250 Z"/>
+    <path d="M806 404 Q811 432 839 437 Q811 442 806 470 Q801 442 773 437 Q801 432 806 404 Z" fill="#7fdcf2"/>
+  </g>
+</svg>
